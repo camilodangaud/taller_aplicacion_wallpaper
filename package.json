@@ -17,7 +17,7 @@
     "@angular/common": "17.3.12",
     "@angular/compiler": "17.3.12",
     "@angular/core": "17.3.12",
-    "@angular/fire": "^20.0.1",
+    "@angular/fire": "^17.1.0",
     "@angular/forms": "17.3.12",
     "@angular/platform-browser": "17.3.12",
     "@angular/platform-browser-dynamic": "17.3.12",
@@ -40,6 +40,7 @@
     "zone.js": "0.14.4"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.17",
     "@angular/cli": "17.3.17",
     "@angular/compiler-cli": "17.3.12",
     "@capacitor/cli": "7.4.3",
