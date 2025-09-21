@@ -1,19 +1,51 @@
 import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
+import { UserService } from './user.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  constructor(private auth: Auth) {}
+  constructor(private userService: UserService) {}
 
-  login(email: string, password: string) {
-    return signInWithEmailAndPassword(this.auth, email, password);
+  login(email: string, password: string): boolean {
+    const users = this.userService.getUsers();
+
+    const user = users.find(u => u.email === email && u.password === password);
+
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      return true;
+    }
+    return false;
   }
 
-  register(email: string, password: string) {
-    return createUserWithEmailAndPassword(this.auth, email, password);
+  register(user: { name: string; lastName: string; email: string; password: string }): boolean {
+    const users = this.userService.getUsers();
+    const exists = users.some(u => u.email === user.email);
+
+    if (exists) {
+      return false; // usuario ya existe
+    }
+
+    const newUser = {
+      id: crypto.randomUUID(),
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password
+    };
+
+    users.push(newUser);
+    this.userService.saveUsers(users);
+    return true;
   }
 
-  logout() {
-    return signOut(this.auth);
+  logout(): void {
+    localStorage.removeItem('currentUser');
+  }
+
+  getCurrentUser(): any | null {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
   }
 }
