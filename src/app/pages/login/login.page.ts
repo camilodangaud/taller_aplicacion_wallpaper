@@ -14,8 +14,9 @@ export class LoginPage {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onLogin() {
-    const ok = this.authService.login(this.email, this.password);
+  async onLogin() {
+    const ok = await this.authService.login(this.email, this.password);
+
     if (ok) {
       this.router.navigate(['/home']);
     } else {

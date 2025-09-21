@@ -1,51 +1,53 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
+import { PreferencesService } from './preferences.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  constructor(private userService: UserService) {}
+  private currentUserKey = 'currentUser';
 
-  login(email: string, password: string): boolean {
+  constructor(
+    private userService: UserService,
+    private preferences: PreferencesService
+  ) {}
+
+  async login(email: string, password: string): Promise<boolean> {
     const users = this.userService.getUsers();
-
     const user = users.find(u => u.email === email && u.password === password);
 
     if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      await this.preferences.setItem(this.currentUserKey, user);
       return true;
     }
     return false;
   }
 
-  register(user: { name: string; lastName: string; email: string; password: string }): boolean {
+  async register(user: { name: string; lastName: string; email: string; password: string }): Promise<boolean> {
     const users = this.userService.getUsers();
     const exists = users.some(u => u.email === user.email);
 
-    if (exists) {
-      return false; // usuario ya existe
-    }
+    if (exists) return false;
 
     const newUser = {
       id: crypto.randomUUID(),
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      password: user.password
+      ...user,
     };
 
     users.push(newUser);
     this.userService.saveUsers(users);
+    
+    await this.preferences.setItem(this.currentUserKey, newUser);
+
     return true;
   }
 
-  logout(): void {
-    localStorage.removeItem('currentUser');
+  async logout(): Promise<void> {
+    await this.preferences.removeItem(this.currentUserKey);
   }
 
-  getCurrentUser(): any | null {
-    const user = localStorage.getItem('currentUser');
-    return user ? JSON.parse(user) : null;
+  async getCurrentUser(): Promise<any | null> {
+    return await this.preferences.getItem<any>(this.currentUserKey);
   }
 }

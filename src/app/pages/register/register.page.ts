@@ -16,8 +16,8 @@ export class RegisterPage {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onRegister() {
-    const ok = this.authService.register({
+  async onRegister() {
+    const ok = await this.authService.register({
       name: this.name,
       lastName: this.lastName,
       email: this.email,
