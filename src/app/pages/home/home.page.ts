@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { ToastService } from '../../core/services/native-toast.service';
+import MyWallpaperPlugin from '../../plugins/MyWallpaperPlugin'; 
 
 @Component({
   selector: 'app-home',
@@ -29,5 +30,11 @@ export class HomePage implements OnInit {
 
   async onWallpaperChanged() {
     await this.toast.wallpaperUpdated();
+  }
+
+  public async callplugin() {
+    console.log('Calling wallpaper plugin...');
+    const resp = await MyWallpaperPlugin.execute();
+    console.log('Wallpaper plugin called.', resp);
   }
 }
